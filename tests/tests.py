@@ -76,6 +76,21 @@ class ShoppingTestCase(unittest.TestCase):
         self.assertIn('Edited', str(res.data))
 
 
+    def test_deleting_shoppinglist(self):
+        self.register()
+        result = self.login()
+        access_token = json.loads(result.data.decode())['access_token']
+
+        res = self.client().post('/shoppinglists/', headers=dict(Authorization="Bearer " + access_token), data=self.shoppinglist)
+        self.assertEqual(res.status_code, 201)
+
+        res = self.client().delete('/shoppinglists/1', headers=dict(Authorization="Bearer " + access_token))
+        self.assertEqual(res.status_code, 200)
+
+        res = self.client().get('/shoppinglists/1', headers=dict(Authorization="Bearer " + access_token))
+        self.assertEqual(res.status_code, 404)
+
+
 
     def tearDown(self):
         with self.app.app_context():
