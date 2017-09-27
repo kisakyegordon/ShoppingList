@@ -53,6 +53,17 @@ class AuthTestCase(unittest.TestCase):
         self.assertEqual(result['message'], "Successfully LoggedIn")
         self.assertEqual(log.status_code, 200)
 
+    def test_unauthorised_login(self):
+
+        self.user_login = {
+            'email': 'joe@gmail.com',
+            'password' : 'joe'
+        }
+        log = self.client().post('/auth/login', data=self.user_login)
+
+        result = json.loads(log.data.decode())
+        self.assertEqual(log.status_code, 401)
+
 
 
 
