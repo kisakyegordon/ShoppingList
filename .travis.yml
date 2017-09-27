@@ -1,0 +1,26 @@
+language: python
+cache:
+- pip
+python:
+- "3.6.2"
+
+install:
+  - pip install coveralls
+  - pip install coverage
+  - pip install flask
+  - pip install flask_script
+  
+install:
+- pip install -r requirements.txt
+
+script:
+ - nosetests --with-coverage
+
+cache: pip
+
+install:
+  - pip install coveralls
+  - pip install coverage
+  - pip install flask
+
+after_success: coveralls
