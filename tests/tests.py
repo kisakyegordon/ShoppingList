@@ -24,6 +24,13 @@ class ShoppingTestCase(unittest.TestCase):
         }
         return self.client().post('/auth/register', data=user_data)
 
+    def login(self, email="test@gmail.com", password="test"):
+        user_data = {
+            'email': email,
+            'password': password
+        }
+        return self.client().post('/auth/login', data=user_data)
+
     def tearDown(self):
         with self.app.app_context():
             db.session.remove()
