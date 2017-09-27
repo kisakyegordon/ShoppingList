@@ -6,6 +6,10 @@ python:
 services:
   - postgresql
 
+before_install:
+  - export DATABASE_URL_TEST="postgresql://postgres@localhost/test"
+  - export APP_SETTINGS="app.config.TestingConfig"
+
 # command to install dependencies
 install:
   - pip install -r requirements.txt
