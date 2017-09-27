@@ -1,28 +1,19 @@
+
 language: python
-
-cache:
-- pip
-
 python:
-- "3.6.2"
+  - "3.6"
 
+services:
+  - postgresql
+
+# command to install dependencies
 install:
-  - pip install coveralls
-  - pip install coverage
-  - pip install flask
-  - pip install flask-script
-  
-install:
-- pip install -r requirements.txt
+  - pip install -r requirements.txt
+  - pip install coveralls --quiet
 
-script:
- - python manage.py test
+before_script:
+  - createdb test_db
 
-cache: pip
-
-install:
-  - pip install coveralls
-  - pip install coverage
-  - pip install flask
-
+# command to run tests
+script: coverage run --source=app ./manage.py test
 after_success: coveralls
