@@ -6,7 +6,6 @@ from app import create_app, db
 
 class ShoppingTestCase(unittest.TestCase):
 
-
     def setUp(self):
         self.app = create_app(config_name='testing')
         self.client = self.app.test_client
@@ -75,7 +74,6 @@ class ShoppingTestCase(unittest.TestCase):
         res = self.client().get('/shoppinglists/1', headers=dict(Authorization="Bearer " + access_token))
         self.assertIn('Edited', str(res.data))
 
-
     def test_deleting_shoppinglist(self):
         self.register()
         result = self.login()
@@ -89,8 +87,6 @@ class ShoppingTestCase(unittest.TestCase):
 
         res = self.client().get('/shoppinglists/1', headers=dict(Authorization="Bearer " + access_token))
         self.assertEqual(res.status_code, 404)
-
-
 
     def tearDown(self):
         with self.app.app_context():
