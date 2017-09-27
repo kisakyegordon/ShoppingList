@@ -40,6 +40,43 @@ class ShoppingTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 201)
         self.assertIn('Monday', str(res.data))
 
+    # def test_get_shoppinglists(self):
+    #     self.register()
+    #     result = self.login()
+    #     access_token = json.loads(result.data.decode())['access_token']
+    #
+    #     res = self.client().post('/shoppinglists/', headers=dict(Authorization="Bearer " + access_token), data=self.shoppinglist)
+    #     self.assertEqual(res.status_code, 201)
+    #     res1 = self.client().get('/shoppinglists/page=1', headers=dict(Authorization="Bearer " + access_token))
+    #     # # self.assertEqual(res.status_code, 200)
+    #     self.assertIn('Monday', str(res1.data))
+
+    def test_get_shoppinglist_by_id(self):
+        self.register()
+        result = self.login()
+        access_token = json.loads(result.data.decode())['access_token']
+
+        res = self.client().post('/shoppinglists/', headers=dict(Authorization="Bearer " + access_token), data=self.shoppinglist)
+        self.assertEqual(res.status_code, 201)
+        res = self.client().get('/shoppinglists/1', headers=dict(Authorization="Bearer " + access_token))
+        self.assertIn('Monday', str(res.data))
+
+    def test_editing_shoppinglist(self):
+        self.register()
+        result = self.login()
+        access_token = json.loads(result.data.decode())['access_token']
+
+        res = self.client().post('/shoppinglists/', headers=dict(Authorization="Bearer " + access_token), data=self.shoppinglist)
+        self.assertEqual(res.status_code, 201)
+
+        res = self.client().put('/shoppinglists/1', headers=dict(Authorization="Bearer " + access_token), data={'name':'Monday List Edited'})
+        self.assertEqual(res.status_code, 200)
+
+        res = self.client().get('/shoppinglists/1', headers=dict(Authorization="Bearer " + access_token))
+        self.assertIn('Edited', str(res.data))
+
+
+
     def tearDown(self):
         with self.app.app_context():
             db.session.remove()
