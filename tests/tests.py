@@ -31,6 +31,15 @@ class ShoppingTestCase(unittest.TestCase):
         }
         return self.client().post('/auth/login', data=user_data)
 
+    def test_shoppinglist_creation(self):
+        self.register()
+        result = self.login()
+        access_token = json.loads(result.data.decode())['access_token']
+
+        res = self.client().post('/shoppinglists/', headers=dict(Authorization="Bearer " + access_token), data=self.shoppinglist)
+        self.assertEqual(res.status_code, 201)
+        self.assertIn('Monday', str(res.data))
+
     def tearDown(self):
         with self.app.app_context():
             db.session.remove()
