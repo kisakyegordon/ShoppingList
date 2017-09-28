@@ -1,0 +1,21 @@
+
+language: python
+python:
+  - "3.6"
+
+services:
+  - postgresql
+
+
+# command to install dependencies
+install:
+  - pip install -r requirements.txt
+  - pip install coveralls --quiet
+
+
+before_script:
+  - createdb shoppinglist_test;
+
+# command to run tests
+script: coverage run --source=app ./manage.py test
+after_success: coveralls
