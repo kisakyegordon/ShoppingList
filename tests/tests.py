@@ -12,8 +12,6 @@ class ShoppingTestCase(unittest.TestCase):
         self.shoppinglist = {'name' : 'Monday List'}
 
         with self.app.app_context():
-            db.session.close()
-            db.drop_all()
             db.create_all()
 
     def register(self, email="test@gmail.com", password="test"):
