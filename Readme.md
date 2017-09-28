@@ -1,3 +1,3 @@
-https://travis-ci.org/kisakyegordon/ShoppingList.svg?branch=development
+https://travis-ci.org/kisakyegordon/ShoppingList.svg?branch=master
 # SHOPPINGLIST API
 
