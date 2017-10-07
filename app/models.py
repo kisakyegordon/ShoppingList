@@ -66,6 +66,7 @@ class ShoppingList(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200))
     owner = db.Column(db.Integer, db.ForeignKey(User.id))
+    items = db.relationship("ListItem", order_by="ListItem.id", cascade="all, delete-orphan")
 
 
     def __init__(self, name):
@@ -89,3 +90,30 @@ class ShoppingList(db.Model):
 
     def __repr__(self):
         return "<ShoppingList: {}>".format(self.name)
+
+
+
+class ListItem(db.Model):
+    
+    __tablename__ = 'listitem'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(180))
+    list_id = db.Column(db.Integer, db.ForeignKey(ShoppingList.id))
+
+    def __init__(self, name):
+        self.name = name
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
+    @staticmethod
+    def get_all():
+        return ListItem.query.all()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+        
