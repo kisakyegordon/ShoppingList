@@ -9,13 +9,12 @@ from flask_bcrypt import Bcrypt
 db = SQLAlchemy()
 
 def create_app(config_name):
-    from app.models import ShoppingList, User
+    from app.models import ShoppingList, User, ListItem
     app = FlaskAPI(__name__, instance_relative_config=True)
     bcrypt = Bcrypt(app)
 
-    # app.config.from_object(app_config[config_name])
+
     app.config.from_object(app_config['development'])
-    # app.config.from_pyfile('config.py')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
 
@@ -26,7 +25,7 @@ def create_app(config_name):
         auth_header = request.headers.get("Authorization")
         access_token = auth_header.split(" ")[1]
 
-        if access_token:
+        if access_token or access_token != None:
             user_id = User.decode_token(access_token)
             if not isinstance(user_id, str):
 
@@ -120,6 +119,87 @@ def create_app(config_name):
                     'message': message
                 }
                 return make_response(jsonify(response)), 401
+
+    @app.route('/shoppinglists/<list_id>/items/', methods=['POST', 'GET'])
+    def listitems(list_id):
+
+        auth_header = request.headers.get("Authorization")
+        access_token = auth_header.split(" ")[1]
+
+        if access_token:
+            user_id = User.decode_token(access_token)
+            if not isinstance(user_id, str):
+                
+                if request.method == "POST":
+                    name = str(request.data.get('name', ''))
+
+                    if name:
+                        listitem = ListItem(name=name)
+                        # ListItem.save()
+                        ListItem.save(listitem)
+                        response = jsonify({
+                            'Id': listitem.id,
+                            'Name': listitem.name,
+                            'List': list_id
+                        })
+                        return make_response(response), 201
+
+                elif request.method == "GET":
+
+                    listitem_get = ListItem.query.filter_by()
+                    results = []
+
+                    for listitem in listitem_get:
+                        list_data = {}
+                        list_data['Id'] = listitem.id
+                        list_data['Name'] = listitem.name
+                        list_data['List'] = list_id
+                        list_data['Owner'] = user_id
+                        results.append(list_data)
+
+                    return make_response(jsonify(results)), 200
+
+                else:
+                    message = user_id
+                    response = {
+                    'message': message
+                    }
+                    return make_response(jsonify(response)), 401
+
+    @app.route('/shoppinglists/<list_id>/items/<item_id>', methods=['GET', 'DELETE', 'PUT'])
+    def item_modifications(item_id, **kwargs):
+
+        auth_header = request.headers.get('Authorization')
+        access_token = auth_header.split(" ")[1]
+
+        if access_token:
+            user_id = User.decode_token(access_token)
+            if not isinstance(user_id, str):
+                listitem = ListItem.query.filter_by(id=item_id).first()
+                if not listitem:
+                    abort(404)
+
+                if request.method == 'DELETE':
+                    listitem.delete()
+                    return {"message": "Item has been deleted"}
+
+                elif request.method == 'PUT':
+                    name = str(request.data.get('name', ''))
+                    listitem.name = name
+                    listitem.save()
+
+                    response = jsonify({
+                    'id': listitem.id,
+                    'name': listitem.name
+                    })
+                    return make_response(response), 200
+
+                elif request.method == 'GET':
+                    response = jsonify({
+                    'id': listitem.id,
+                    'name':listitem.name
+                    })
+                    return make_response(response), 401
 
     from .auth import auth_blueprint
     app.register_blueprint(auth_blueprint)
