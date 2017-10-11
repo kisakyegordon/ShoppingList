@@ -5,8 +5,8 @@ python:
 services:
   - postgresql
 
-before_install:
-  - export DATABASE_URL_TEST = "postgresql://postgres@localhost/shoppinglist_test"
+# before_install:
+#   - export DATABASE_URL_TEST = "postgresql://postgres@localhost/shoppinglist_test"
 
 
 # command to install dependencies
