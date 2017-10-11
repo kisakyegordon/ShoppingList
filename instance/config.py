@@ -20,7 +20,8 @@ class DevelopmentConfig(Config):
 
 class TestingConfig(Config):
     Testing = True
-    SQLALCHEMY_DATABASE_URI = 'postgresql://kisakye:kisakye6@localhost/shoppinglist_test'
+    # SQLALCHEMY_DATABASE_URI = 'postgresql://kisakye:kisakye6@localhost/shoppinglist_test'
+    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:@localhost/shoppinglist_test'
     DEBUG = True
 
 
