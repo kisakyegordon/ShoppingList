@@ -8,7 +8,7 @@ class Config(object):
     # SECRET = os.getenv('SECRET')
     # SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
     SECRET = "very sensitive text"
-    SQLALCHEMY_DATABASE_URI = 'postgresql://kisakye:kisakye6@localhost/shoppinglist_db'
+    # SQLALCHEMY_DATABASE_URI = 'postgresql://kisakye:kisakye6@localhost/shoppinglist_db'
 
 
 class DevelopmentConfig(Config):
