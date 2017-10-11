@@ -120,7 +120,7 @@ def create_app(config_name):
                 }
                 return make_response(jsonify(response)), 401
 
-    @app.route('/shoppinglists/<list_id>/items/', methods=['POST', 'GET'])
+    @app.route('/shoppinglists/<int:list_id>/items/', methods=['POST', 'GET'])
     def listitems(list_id):
 
         auth_header = request.headers.get("Authorization")
@@ -129,6 +129,7 @@ def create_app(config_name):
         if access_token:
             user_id = User.decode_token(access_token)
             if not isinstance(user_id, str):
+                shoppinglist = ShoppingList.query.filter_by(id=list_id).first()
                 
                 if request.method == "POST":
                     name = str(request.data.get('name', ''))
