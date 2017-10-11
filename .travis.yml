@@ -6,6 +6,9 @@ python:
 services:
   - postgresql
 
+before_install:
+- export DATABASE_URL_TEST = "postgresql://postgres@localhost/shoppinglist_test"
+
 
 # command to install dependencies
 install:
@@ -20,5 +23,6 @@ install:
   - psql -c 'create database shoppinglist_test;' -U postgres
 
 # command to run tests
-script: coverage run --source=app ./manage.py test
+script: nosetests --with-coverage --cover-package=app
+
 after_success: coveralls
