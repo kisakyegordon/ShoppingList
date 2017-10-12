@@ -1,5 +1,7 @@
 [![Build Status](https://travis-ci.org/kisakyegordon/ShoppingList.svg?branch=master)](https://travis-ci.org/kisakyegordon/ShoppingList)
 
+[![Coverage Status](https://coveralls.io/repos/github/kisakyegordon/ShoppingList/badge.svg?branch=master)](https://coveralls.io/github/kisakyegordon/ShoppingList?branch=master)
+
 # SHOPPINGLIST API
 A simple Shopping List Flask API, For Tracking a Users Planned Shopping Lists and their corresponding items.
 
