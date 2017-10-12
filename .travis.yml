@@ -22,6 +22,6 @@ before_script:
   - python manage.py db upgrade
 
 # command to run tests
-script: nosetests
+script: nosetests --with-coverage --cover-package=app
 
 after_success: coveralls
