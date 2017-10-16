@@ -5,6 +5,12 @@
 # SHOPPINGLIST API
 A simple Shopping List Flask API, For Tracking a Users Planned Shopping Lists and their corresponding items.
 
+### API Documentation
+ShoppingList API Documentation
+```
+- http://docs.shoppinglist11.apiary.io/#reference/0/shoppinglist-manipulation/delete-a-shopping-list
+```
+
 
 ### Features:
 * Users can create accounts
