@@ -4,6 +4,7 @@ import os
 import json
 from app import create_app, db
 import time
+import datetime
 
 
 class ShoppingTestCase(unittest.TestCase):
@@ -21,10 +22,11 @@ class ShoppingTestCase(unittest.TestCase):
             # db.drop.all()
             db.create_all()
 
-    def register(self, email="test@gmail.com", password="test"):
+    def register(self, email="test@gmail.com", password="test", country_town='trial'):
         user_data = {
             'email': email,
-            'password': password
+            'password': password,
+            'country_town':country_town
         }
         return self.client().post('/auth/register', data=user_data)
 
