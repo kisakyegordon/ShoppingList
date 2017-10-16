@@ -54,6 +54,7 @@ class LoginView(MethodView):
                     user.save()
 
                     response = {
+                        'Hello': 'Welcome',
                         'message': 'Successfully LoggedIn',
                         'access_token': access_token.decode()
                     }
