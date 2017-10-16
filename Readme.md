@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/kisakyegordon/ShoppingList.svg?branch=master)](https://travis-ci.org/kisakyegordon/ShoppingList)
 
+
 [![Coverage Status](https://coveralls.io/repos/github/kisakyegordon/ShoppingList/badge.svg?branch=master)](https://coveralls.io/github/kisakyegordon/ShoppingList?branch=master)
 
 # SHOPPINGLIST API
@@ -8,7 +9,7 @@ A simple Shopping List Flask API, For Tracking a Users Planned Shopping Lists an
 ### API Documentation
 ShoppingList API Documentation
 ```
-- http://docs.shoppinglist11.apiary.io/#reference/0/shoppinglist-manipulation/delete-a-shopping-list
+- http://docs.shoppinglist11.apiary.io/#
 ```
 
 
