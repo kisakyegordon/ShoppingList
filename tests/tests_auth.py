@@ -19,6 +19,22 @@ class AuthTestCase(unittest.TestCase):
             'country_town': 'trial'
         }
 
+        # self.user_reset = {
+        #     'email': 'joe@gmail.com',
+        #     'password': 'new-joe',
+        #     'country_town': 'trial'
+        # }
+
+        self.user_login = {
+            'email': 'joe@gmail.com',
+            'password' : 'joe'
+        }
+
+        self.user_login2 = {
+            'email': 'joe@gmail.com',
+            'password' : 'new-joe'
+        }
+
         with self.app.app_context():
             db.session.close()
             db.drop_all()
@@ -62,6 +78,7 @@ class AuthTestCase(unittest.TestCase):
             'email': 'joe@gmail.com',
             'password' : 'joe'
         }
+        
         reg = self.client().post('/auth/register', data=self.user_data)
         log = self.client().post('/auth/login', data=self.user_login)
 
@@ -74,14 +91,47 @@ class AuthTestCase(unittest.TestCase):
 
     def test_unauthorised_login(self):
 
-        self.user_login = {
-            'email': 'joe@gmail.com',
-            'password' : 'joe'
-        }
         log = self.client().post('/auth/login', data=self.user_login)
 
         result = json.loads(log.data.decode())
         self.assertEqual(log.status_code, 401)
+
+    def test_reset_password(self):
+        data = {
+            'email': 'joe@gmail.com',
+            'password': 'new-joe',
+            'country_town': 'trial'
+        }
+
+        self.user_login = {
+            'email': 'joe@gmail.com',
+            'password' : 'joe'
+        }
+
+        self.user_login2 = {
+            'email': 'joe@gmail.com',
+            'password' : 'new-joe'
+        }
+        reg = self.client().post('/auth/register', data=self.user_data)
+        log = self.client().post('/auth/login', data=self.user_login)
+
+        res = self.client().post('/auth/reset-password', data=data)
+        data = json.loads(res.data)
+        self.assertTrue(data['message'] == 'Password Succesfully Changed')
+
+        log1 = self.client().post('/auth/login', data=self.user_login)
+        data1 = json.loads(log1.data.decode())
+        self.assertTrue(data1['message'] == 'Invalid email or password')
+
+        log2 = self.client().post('/auth/login', data=self.user_login2)
+        result = json.loads(log.data.decode())
+        self.assertTrue(result['access_token'])
+        self.assertEqual(result['message'], "Successfully LoggedIn")
+        self.assertEqual(log.status_code, 200)
+
+
+
+        
 
 
 
