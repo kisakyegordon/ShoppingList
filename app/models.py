@@ -82,9 +82,9 @@ class ShoppingList(db.Model):
         db.session.commit()
 
 
-    @staticmethod
-    def get_all():
-        return ShoppingList.query.all()
+    # @staticmethod
+    # def get_all():
+    #     return ShoppingList.query.all()
 
 
     def delete(self):
@@ -92,8 +92,8 @@ class ShoppingList(db.Model):
         db.session.commit()
 
 
-    def __repr__(self):
-        return "<ShoppingList: {}>".format(self.name)
+    # def __repr__(self):
+    #     return "<ShoppingList: {}>".format(self.name)
 
 
 
@@ -120,36 +120,5 @@ class ListItem(db.Model):
         db.session.delete(self)
         db.session.commit()
 
-# class BlacklistToken(db.Model):
-#     """
-#     Model for storing blacklisted tokens
-#     """
-    
-#     __tablename__ = 'blacklist'
-
-#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-#     token = db.Column(db.String(500), unique=True, nullable=False)
-#     blacklist_status = db.Column(db.DateTime,  nullable=False)
-
-#     def __init__(self, token):
-#         self.token = token
-#         # self.blacklist_status = datetime.datetime.now()
-#         self.blacklist_status = datetime.now()
-#     def __repr__(self):
-#         return '<id: token: {}'.format(self.token)
-
-#     def save(self):
-#         self.session.add(self)
-#         self.session.commit()
-
-#     @staticmethod
-#     def check_blacklist(auth_token):
-#         # check whether token has been blacklisted
-
-#         res = BlacklistToken.query.filter_by(token=str(auth_token)).first()
-#         if res:
-#             return True
-#         else:
-#             return False
 
         
