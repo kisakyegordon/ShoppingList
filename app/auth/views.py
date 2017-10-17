@@ -99,14 +99,15 @@ class ResetView(MethodView):
     
     def post(self):
         data = request.get_json()
-        # email = data['email']
-        # user = User.query.filter_by(email=email).first()
+        email = data['email']
         country_town = data['country_town']
-        user = User.query.filter_by(country_town=country_town).first()
+
+        user = User.query.filter_by(email=email).filter_by(country_town=country_town).first()
+        # user = User.query.filter_by(country_town=country_town).first()
+
         if not user:
             return make_response(jsonify({'No User Found'})), 404
-        user.password = Bcrypt().generate_password_hash(data['password']).decode()
-        
+        user.password = Bcrypt().generate_password_hash(data['password']).decode()   
         user.save()
         response = {'message': 'Password Succesfully Changed'}
         return make_response(jsonify(response)), 201
