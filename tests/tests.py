@@ -147,6 +147,31 @@ class ShoppingTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 404)
 
 
+    def test_deleting_shoppinglist_message(self):
+        self.register()
+        result = self.login()
+        access_token = json.loads(result.data.decode())['access_token']
+
+        res = self.client().post('/shoppinglists/', headers=dict(Authorization="Bearer " + access_token), data=self.shoppinglist)
+        self.assertEqual(res.status_code, 201)
+
+        res = self.client().delete('/shoppinglists/1', headers=dict(Authorization="Bearer " + access_token))
+        self.assertEqual(res.status_code, 200)
+
+        res = self.client().get('/shoppinglists/1', headers=dict(Authorization="Bearer " + access_token))
+        result = json.loads(res.data.decode())
+        self.assertTrue(result['message'], 'List Item Does Not Exist.')
+
+    def test_decorator_messages(self):
+        self.register()
+        result = self.login()
+        access_token = json.loads(result.data.decode())['access_token']
+
+        res = self.client().post('/shoppinglists/', headers=dict(Authorization="Bearer "), data=self.shoppinglist)
+        data = json.loads(res.data.decode())
+        self.assertTrue(data['message'], 'No Token Provided.')
+
+
     def tearDown(self):
         with self.app.app_context():
             db.session.remove()
