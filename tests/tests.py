@@ -19,7 +19,6 @@ class ShoppingTestCase(unittest.TestCase):
 
         with self.app.app_context():
             db.session.close()
-            # db.drop.all()
             db.create_all()
 
     def register(self, email="test@gmail.com", password="test", country_town='trial'):
