@@ -5,6 +5,7 @@ from app import create_app, db
 from app.models import User
 
 
+
 class AuthTestCase(unittest.TestCase):
 
     def setUp(self):
