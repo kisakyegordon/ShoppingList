@@ -102,24 +102,6 @@ def create_app(config_name):
 
                 return make_response(jsonify("Total = {} Lists".format(len(results)), urls, results)), 200
 
-
-            # elif request.args.get("q"):
-                
-            #     search_word = request.args.get("q", "")
-
-            #     q = ShoppingList.query.filter(ShoppingList.name.ilike("%"+ search_word +"%")).filter_by(owner=user_id).all()
-
-            #     results1 = []
-
-            #     for shoppinglist in q:
-            #         list_data = {}
-            #         list_data['id'] = shoppinglist.id
-            #         list_data['name'] = shoppinglist.name
-            #         # list_data['owner'] = user_id
-            #         results1.append(list_data)
-
-            #     return make_response(jsonify("Total = {} Search Results".format(len(results1)), results1)), 200
-
             else:
                 shoppinglist_get = ShoppingList.query.filter_by(owner=user_id).all()
                 results2 = []
