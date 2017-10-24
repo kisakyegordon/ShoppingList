@@ -16,6 +16,7 @@ class User(db.Model):
     lists = db.relationship("ShoppingList", order_by="ShoppingList.id", cascade="all, delete-orphan")
 
 
+
     def __init__(self, email, password, country_town, token=None):
         """Initialize the user with email and password"""
 
@@ -73,9 +74,12 @@ class ShoppingList(db.Model):
     items = db.relationship("ListItem", order_by="ListItem.id", cascade="all, delete-orphan")
 
 
-    def __init__(self, name):
-        self.name = name
 
+
+
+    def __init__(self, name, owner):
+        self.name = name
+        self.owner = owner
 
     def save(self):
         db.session.add(self)
@@ -105,8 +109,9 @@ class ListItem(db.Model):
     name = db.Column(db.String(180))
     list_id = db.Column(db.Integer, db.ForeignKey(ShoppingList.id))
 
-    def __init__(self, name):
+    def __init__(self, name, list_id):
         self.name = name
+        self.list_id = list_id
 
     def save(self):
         db.session.add(self)
