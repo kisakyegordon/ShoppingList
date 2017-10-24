@@ -140,6 +140,31 @@ class AuthTestCase(unittest.TestCase):
         self.assertEqual(result['message'], "Successfully LoggedIn")
         self.assertEqual(log.status_code, 200)
 
+    def test_reset_password_no_user(self):
+        self.data = {
+            'email': 'max@gmail.com',
+            'password': 'new-joe',
+            'country_town': 'trial'
+        }
+
+        self.user_login = {
+            'email': 'joe@gmail.com',
+            'password' : 'joe'
+        }
+
+        self.user_login2 = {
+            'email': 'joe@gmail.com',
+            'password' : 'new-joe'
+        }
+        reg = self.client().post('/auth/register', data=self.user_data)
+        log = self.client().post('/auth/login', data=self.user_login)
+
+        res = self.client().post('/auth/reset-password', data=self.data)
+        self.assertTrue(res.status_code, 404)
+        data = json.loads(res.data)
+        self.assertTrue(data['message'] == 'No User Found')
+
+
 
 
         
