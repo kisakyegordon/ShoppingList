@@ -9,6 +9,8 @@ from flask import json, abort, request, jsonify
 class RegistrationView(MethodView):
 
     def post(self):
+        if not request.data:
+            return make_response(jsonify({"message":"Enter your user login details"}))
 
         user = User.query.filter_by(email=request.data['email']).first()
 
@@ -19,6 +21,9 @@ class RegistrationView(MethodView):
                 email = post_data['email']
                 password = post_data['password']
                 country_town = post_data['country_town']
+                # if not country_town:
+                #     return make_response (jsonify({'messsage':'Missing Country-Town Entry'}))
+
                 user = User(email=email, password=password, country_town=country_town)
                 user.save()
 
@@ -30,7 +35,7 @@ class RegistrationView(MethodView):
             except Exception as e:
 
                 response = {
-                    'message': str(e)
+                    "message": str(e) + "Missing"
                 }
                 return make_response(jsonify(response)), 401
         else:
@@ -112,7 +117,7 @@ class ResetView(MethodView):
         user.password = Bcrypt().generate_password_hash(request.data['password']).decode()   
         user.save()
         response = {'message': 'Password Succesfully Changed'}
-        return make_response(jsonify(response)), 201
+        return make_response(jsonify(response)), 200
 
 
 
