@@ -19,11 +19,10 @@ class AuthTestCase(unittest.TestCase):
             'country_town': 'trial'
         }
 
-        # self.user_reset = {
-        #     'email': 'joe@gmail.com',
-        #     'password': 'new-joe',
-        #     'country_town': 'trial'
-        # }
+        self.user_data_error = {
+            'email': 'joe@gmail.com',
+            'password': 'joe'
+        }
 
         self.user_login = {
             'email': 'joe@gmail.com',
@@ -56,6 +55,10 @@ class AuthTestCase(unittest.TestCase):
 
         self.assertEqual(result['message'], "Enter your user login details")
         self.assertEqual(res.status_code, 400)
+
+    def test_registration_missing_data(self):
+        res = self.client().post('/auth/register', data=self.user_data_error)
+        self.assertEqual(res.status_code, 401)
 
     def test_already_registered_user(self):
 
