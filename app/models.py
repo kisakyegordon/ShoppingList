@@ -95,12 +95,6 @@ class ShoppingList(db.Model):
         db.session.delete(self)
         db.session.commit()
 
-
-    # def __repr__(self):
-    #     return "<ShoppingList: {}>".format(self.name)
-
-
-
 class ListItem(db.Model):
     
     __tablename__ = 'listitem'
@@ -116,10 +110,6 @@ class ListItem(db.Model):
     def save(self):
         db.session.add(self)
         db.session.commit()
-
-    @staticmethod
-    def get_all():
-        return ListItem.query.all()
 
     def delete(self):
         db.session.delete(self)
