@@ -6,37 +6,43 @@
 # SHOPPINGLIST API
 A simple Shopping List Flask API, For Tracking a Users Planned Shopping Lists and their corresponding items.
 
+
+### View Installed Application On Heroku
+```
+https://shoppinglistapi6.herokuapp.com/
+```
+
 ## Getting Started
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See the deployment section for notes on how to deploy the project on a live system.
 
-### Prerequisites
-    * Python 3 Installed on your local machine
-    ```
-    git clone https://github.com/kisakyegordon/ShoppingList
-    ```
+## Prerequisites
+### Python 3 Installed on your local machine
+```
+git clone https://github.com/kisakyegordon/ShoppingList
+```
 
-    * Ensure Virtualenv is Installed on your local machine using
-    ```
-    pip install virtualenv
-    ```
+### Ensure Virtualenv is Installed on your local machine using
+```
+pip install virtualenv
+```
 
-    * Clone the Repository to your local machine using
-    ```
-    git clone https://github.com/kisakyegordon/ShoppingList
-    ```
+### Clone the Repository to your local machine using
+```
+git clone https://github.com/kisakyegordon/ShoppingList
+```
 
-    * Setup the virtual environment and activate it using 
-    ```
-    virtualenv -p python3 myenv
-    ```
+### Setup the virtual environment and activate it using 
+```
+virtualenv -p python3 myenv
+```
 
-    * To Install Requirred Plugins - while inside the activated virtual environment
-    ```
-    pip install -r requirements.txt
-    ```
+### To Install Requirred Plugins - while inside the activated virtual environment
+```
+pip install -r requirements.txt
+```
 
 ### Database Migrations
-* This step asssumes you have the postgres database setup on your local machine , if not go [here] (https://www.postgresql.org/download/)
+* This step asssumes you have the postgres database setup on your local machine , if not go https://www.postgresql.org/download/
 
 
     * On your psql console, create your main application database:
@@ -45,7 +51,7 @@ These instructions will get you a copy of the project up and running on your loc
     ```
 
     * Also create your testing database
-        ```
+    ```
     CREATE DATABASE shoppinglist_test;
     ```
 
@@ -59,6 +65,7 @@ These instructions will get you a copy of the project up and running on your loc
     * And finally, migrate your migrations to persist on the DB
     ```
     (myenv)$ python manage.py db upgrade
+    ```
 
 ## Running The API
 To run the Application - simply enter the following command in your terminal.
