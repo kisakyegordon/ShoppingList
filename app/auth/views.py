@@ -100,18 +100,15 @@ class LogoutView(MethodView):
 class ResetView(MethodView):
     
     def post(self):
-        # data = request.get_json()
-        # email = data['email']
-        # country_town = data['country_town']
+
         email = request.data['email']
         country_town = request.data['country_town']
 
         user = User.query.filter_by(email=email).filter_by(country_town=country_town).first()
-        # user = User.query.filter_by(country_town=country_town).first()
 
         if not user:
-            return make_response(jsonify({'No User Found'})), 404
-        # user.password = Bcrypt().generate_password_hash(data['password']).decode() 
+            return make_response(jsonify({'message':'No User Found'})), 404
+
         user.password = Bcrypt().generate_password_hash(request.data['password']).decode()   
         user.save()
         response = {'message': 'Password Succesfully Changed'}
