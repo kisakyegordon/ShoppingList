@@ -10,7 +10,7 @@ class RegistrationView(MethodView):
 
     def post(self):
         if not request.data:
-            return make_response(jsonify({"message":"Enter your user login details"}))
+            return make_response(jsonify({"message":"Enter your user login details"})), 400
 
         user = User.query.filter_by(email=request.data['email']).first()
 
@@ -21,8 +21,6 @@ class RegistrationView(MethodView):
                 email = post_data['email']
                 password = post_data['password']
                 country_town = post_data['country_town']
-                # if not country_town:
-                #     return make_response (jsonify({'messsage':'Missing Country-Town Entry'}))
 
                 user = User(email=email, password=password, country_town=country_town)
                 user.save()
