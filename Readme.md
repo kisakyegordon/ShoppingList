@@ -16,27 +16,27 @@ https://shoppinglistapi6.herokuapp.com/
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See the deployment section for notes on how to deploy the project on a live system.
 
 ## Prerequisites
-### Python 3 Installed on your local machine
+* Python 3 Installed on your local machine
 ```
 git clone https://github.com/kisakyegordon/ShoppingList
 ```
 
-### Ensure Virtualenv is Installed on your local machine using
+* Ensure Virtualenv is Installed on your local machine using
 ```
 pip install virtualenv
 ```
 
-### Clone the Repository to your local machine using
+* Clone the Repository to your local machine using
 ```
 git clone https://github.com/kisakyegordon/ShoppingList
 ```
 
-### Setup the virtual environment and activate it using 
+* Setup the virtual environment and activate it using 
 ```
 virtualenv -p python3 myenv
 ```
 
-### To Install Requirred Plugins - while inside the activated virtual environment
+* To Install Requirred Plugins - while inside the activated virtual environment
 ```
 pip install -r requirements.txt
 ```
