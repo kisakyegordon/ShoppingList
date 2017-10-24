@@ -121,6 +121,18 @@ class ShoppingTestCase(unittest.TestCase):
         res2 = self.client().post('/shoppinglists/1/items/', headers=dict(Authorization="Bearer " + access_token), data=self.shoppinglist_item)
         self.assertIn('Food', str(res2.data))
 
+    def test_add_shoppinglist_item_no_entry(self):
+        self.register()
+        result = self.login()
+        access_token = json.loads(result.data.decode())['access_token']
+
+        res = self.client().post('/shoppinglists/', headers=dict(Authorization="Bearer " + access_token), data=self.shoppinglist)
+        self.assertEqual(res.status_code, 201)
+        res2 = self.client().post('/shoppinglists/1/items/', headers=dict(Authorization="Bearer " + access_token), data="")
+        self.assertTrue(res2.status_code, 400)
+        response = json.loads(res2.data.decode())
+        self.assertTrue(response['message'], 'Please Enter Some Valid Content')
+
     def test_get_shoppinglist_items(self):
         self.register()
         result = self.login()
@@ -132,8 +144,6 @@ class ShoppingTestCase(unittest.TestCase):
         self.assertIn('Food', str(res2.data))
         res3 = self.client().get('/shoppinglists/1/items/', headers=dict(Authorization="Bearer " + access_token), data=self.shoppinglist_item)
         self.assertIn('Food', str(res3.data))
-        # response = json.loads(res3.data.decode())
-        # self.assertTrue(response['Owner'])
         
 
     def test_delete_shoppinglist_item(self):
