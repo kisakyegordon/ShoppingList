@@ -49,6 +49,27 @@ class ShoppingTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 201)
         self.assertIn('Monday', str(res.data))
 
+    def test_shoppinglist_search(self):
+        self.register()
+        result = self.login()
+        access_token = json.loads(result.data.decode())['access_token']
+
+        res = self.client().post('/shoppinglists/', headers=dict(Authorization="Bearer " + access_token), data=self.shoppinglist)
+
+        search = self.client().get('/shoppinglists/search/?q=mon', headers=dict(Authorization="Bearer " + access_token))
+        self.assertIn('Monday', str(search.data))
+
+    def test_shoppinglist_getall(self):
+        self.register()
+        result = self.login()
+        access_token = json.loads(result.data.decode())['access_token']
+
+        res = self.client().post('/shoppinglists/', headers=dict(Authorization="Bearer " + access_token), data=self.shoppinglist)
+        res2 = self.client().post('/shoppinglists/', headers=dict(Authorization="Bearer " + access_token), data=self.shoppinglist2)
+        search = self.client().get('/shoppinglists/', headers=dict(Authorization="Bearer " + access_token))
+        self.assertIn('Monday', str(search.data))
+        self.assertIn('Tuesday', str(search.data))
+
     def test_shoppinglist_creation_no_entry(self):
         self.register()
         result = self.login()
@@ -209,21 +230,7 @@ class ShoppingTestCase(unittest.TestCase):
         response = json.loads(res4.data.decode())
         self.assertIn('Toiletries', response['name'])
 
-    # def test_deleting_shoppinglist_message(self):
-    #     self.register()
-    #     result = self.login()
-    #     access_token = json.loads(result.data.decode())['access_token']
-
-    #     res = self.client().post('/shoppinglists/', headers=dict(Authorization="Bearer " + access_token), data=self.shoppinglist)
-    #     self.assertEqual(res.status_code, 201)
-
-    #     res = self.client().delete('/shoppinglists/1', headers=dict(Authorization="Bearer " + access_token))
-    #     self.assertEqual(res.status_code, 200)
-
-    #     res = self.client().get('/shoppinglists/1', headers=dict(Authorization="Bearer " + access_token))
-    #     result = json.loads(res.data.decode())
-    #     self.assertTrue(result['message'], 'List Item Does Not Exist.')
-
+    # All No Token Provided tests
     def test_decorator_messages(self):
         self.register()
         result = self.login()
@@ -233,6 +240,43 @@ class ShoppingTestCase(unittest.TestCase):
         response = json.loads(res.data.decode())
         self.assertTrue(response['message'], 'No Token Provided')
 
+    def test_decorator_messages_no_token_lists(self):
+        self.register()
+        result = self.login()
+        access_token = json.loads(result.data.decode())['access_token']
+
+        res = self.client().post('/shoppinglists/', headers=dict(Authorization="Bearer " + access_token), data=self.shoppinglist)
+
+        res2 = self.client().get('/shoppinglists/1')
+        response = json.loads(res2.data.decode())
+        self.assertTrue(response['message'], 'No Token Provided')
+
+    def test_decorator_messages_no_token_post_list_item(self):
+        self.register()
+        result = self.login()
+        access_token = json.loads(result.data.decode())['access_token']
+
+        res = self.client().post('/shoppinglists/', headers=dict(Authorization="Bearer " + access_token), data=self.shoppinglist)
+
+        res2 = self.client().post('/shoppinglists/1/items/',  data=self.shoppinglist)
+        response = json.loads(res2.data.decode())
+        self.assertTrue(response['message'], 'No Token Provided')
+
+    def test_decorator_messages_no_token_post_list_item_modify(self):
+        self.register()
+        result = self.login()
+        access_token = json.loads(result.data.decode())['access_token']
+
+        res = self.client().post('/shoppinglists/', headers=dict(Authorization="Bearer " + access_token), data=self.shoppinglist)
+
+        res2 = self.client().get('/shoppinglists/1/items/', headers=dict(Authorization="Bearer " + access_token), data=self.shoppinglist_item)
+
+        res3 = self.client().get('/shoppinglists/1/items/')      
+        response = json.loads(res3.data.decode())
+        self.assertTrue(response['message'], 'No Token Provided')
+
+    # All Invalid Token Tests    
+
     def test_decorator_messages_invalid_token(self):
         self.register()
         result = self.login()
@@ -241,6 +285,43 @@ class ShoppingTestCase(unittest.TestCase):
         res = self.client().post('/shoppinglists/', headers=dict(Authorization="Bearer "), data=self.shoppinglist)
         response = json.loads(res.data.decode())
         self.assertTrue(response['message'], 'Token is Invalid')
+
+    def test_decorator_messages_invalid_token_lists(self):
+        self.register()
+        result = self.login()
+        access_token = json.loads(result.data.decode())['access_token']
+
+        res = self.client().post('/shoppinglists/', headers=dict(Authorization="Bearer " + access_token), data=self.shoppinglist)
+
+        res2 = self.client().get('/shoppinglists/1', headers=dict(Authorization="Bearer "), data=self.shoppinglist)
+        response = json.loads(res2.data.decode())
+        self.assertTrue(response['message'], 'Token is Invalid')
+
+
+    def test_decorator_messages_invalid_token_post_list_item(self):
+        self.register()
+        result = self.login()
+        access_token = json.loads(result.data.decode())['access_token']
+
+        res = self.client().post('/shoppinglists/', headers=dict(Authorization="Bearer " + access_token), data=self.shoppinglist)
+
+        res2 = self.client().post('/shoppinglists/1/items/', headers=dict(Authorization="Bearer "), data=self.shoppinglist)
+        response = json.loads(res2.data.decode())
+        self.assertTrue(response['message'], 'Token is Invalid')
+
+    def test_decorator_messages_invalid_token_post_list_item_modify(self):
+        self.register()
+        result = self.login()
+        access_token = json.loads(result.data.decode())['access_token']
+
+        res = self.client().post('/shoppinglists/', headers=dict(Authorization="Bearer " + access_token), data=self.shoppinglist)
+
+        res2 = self.client().get('/shoppinglists/1/items/', headers=dict(Authorization="Bearer " + access_token), data=self.shoppinglist_item)
+
+        res3 = self.client().get('/shoppinglists/1/items/', headers=dict(Authorization="Bearer "))      
+        response = json.loads(res3.data.decode())
+        self.assertTrue(response['message'], 'Token is Invalid')
+
 
 
     def test_unusable_token(self):
