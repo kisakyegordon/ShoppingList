@@ -1,7 +1,5 @@
 [![Build Status](https://travis-ci.org/kisakyegordon/ShoppingList.svg?branch=master)](https://travis-ci.org/kisakyegordon/ShoppingList)
 
-
-
 [![Coverage Status](https://coveralls.io/repos/github/kisakyegordon/ShoppingList/badge.svg?branch=master)](https://coveralls.io/github/kisakyegordon/ShoppingList?branch=master)
 
 # SHOPPINGLIST API
@@ -93,9 +91,14 @@ nosetests --with-coverage --cover-package=app
 ## Deployment
 
 Using Heroku as a free development server
+
+```
 * Go to settings on Heroku - Variables pick the provided App variables for postgres and pass that very same variable in your configurations
 * Push all changes to your github account
 * Deploy the github branch with the running API to your Heroku account.
+
+```
+
 
 
 ### Endpoints to create a user account and login into the application
