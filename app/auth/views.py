@@ -122,24 +122,24 @@ logout_view = LogoutView.as_view('logout_view')
 reset_view = ResetView.as_view('reset_view')
 
 auth_blueprint.add_url_rule(
-    '/auth/register',
+    '/v1/auth/register',
     view_func=registration_view,
     methods=['POST'])
 
 auth_blueprint.add_url_rule(
-    '/auth/login',
+    '/v1/auth/login',
     view_func=login_view,
     methods=['POST']
 )
 
 auth_blueprint.add_url_rule(
-    '/auth/logout',
+    '/v1/auth/logout',
     view_func=logout_view,
     methods=['POST']
 )
 
 auth_blueprint.add_url_rule(
-    '/auth/reset-password',
+    '/v1/auth/reset-password',
     view_func=reset_view,
     methods=['POST']
 )
