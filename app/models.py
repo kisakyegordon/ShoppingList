@@ -71,6 +71,8 @@ class ShoppingList(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200))
     owner = db.Column(db.Integer, db.ForeignKey(User.id))
+    date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
+    date_modified = db.Column(db.DateTime, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
     items = db.relationship("ListItem", order_by="ListItem.id", cascade="all, delete-orphan")
 
 
@@ -85,12 +87,6 @@ class ShoppingList(db.Model):
         db.session.add(self)
         db.session.commit()
 
-
-    # @staticmethod
-    # def get_all():
-    #     return ShoppingList.query.all()
-
-
     def delete(self):
         db.session.delete(self)
         db.session.commit()
@@ -101,6 +97,8 @@ class ListItem(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(180))
+    date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
+    date_modified = db.Column(db.DateTime, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
     list_id = db.Column(db.Integer, db.ForeignKey(ShoppingList.id))
 
     def __init__(self, name, list_id):
