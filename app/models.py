@@ -79,9 +79,11 @@ class ShoppingList(db.Model):
 
 
 
-    def __init__(self, name, owner):
+    def __init__(self, name, owner, date_created, date_modified):
         self.name = name
         self.owner = owner
+        self.date_created = date_created
+        self.date_modified = date_modified
 
     def save(self):
         db.session.add(self)
@@ -101,9 +103,11 @@ class ListItem(db.Model):
     date_modified = db.Column(db.DateTime, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
     list_id = db.Column(db.Integer, db.ForeignKey(ShoppingList.id))
 
-    def __init__(self, name, list_id):
+    def __init__(self, name, list_id, date_created, date_modified):
         self.name = name
         self.list_id = list_id
+        self.date_created = date_created
+        self.date_modified = date_modified
 
     def save(self):
         db.session.add(self)
