@@ -71,19 +71,12 @@ class ShoppingList(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200))
     owner = db.Column(db.Integer, db.ForeignKey(User.id))
-    date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
-    date_modified = db.Column(db.DateTime, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
     items = db.relationship("ListItem", order_by="ListItem.id", cascade="all, delete-orphan")
 
 
-
-
-
-    def __init__(self, name, owner, date_created, date_modified):
+    def __init__(self, name, owner):
         self.name = name
         self.owner = owner
-        self.date_created = date_created
-        self.date_modified = date_modified
 
     def save(self):
         db.session.add(self)
@@ -99,15 +92,11 @@ class ListItem(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(180))
-    date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
-    date_modified = db.Column(db.DateTime, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
     list_id = db.Column(db.Integer, db.ForeignKey(ShoppingList.id))
 
-    def __init__(self, name, list_id, date_created, date_modified):
+    def __init__(self, name, list_id):
         self.name = name
         self.list_id = list_id
-        self.date_created = date_created
-        self.date_modified = date_modified
 
     def save(self):
         db.session.add(self)
