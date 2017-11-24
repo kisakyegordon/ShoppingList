@@ -15,8 +15,8 @@ def create_app(config_name):
     bcrypt = Bcrypt(app)
 
 
-    # app.config.from_object(app_config['development'])
-    app.config.from_object(app_config['production'])
+    app.config.from_object(app_config['development'])
+    # app.config.from_object(app_config['production'])
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
 
@@ -101,8 +101,8 @@ def create_app(config_name):
                     list_data['id'] = shoppinglist.id
                     list_data['name'] = shoppinglist.name
                     list_data['owner'] = user_id
-                    list_data['date_created'] = shoppinglist.date_created
-                    list_data['date_modified'] = shoppinglist.date_modified
+                    # list_data['date_created'] = shoppinglist.date_created
+                    # list_data['date_modified'] = shoppinglist.date_modified
                     
                     results.append(list_data)
 
@@ -132,8 +132,8 @@ def create_app(config_name):
                     list_data['id'] = shoppinglist.id
                     list_data['name'] = shoppinglist.name
                     list_data['owner'] = user_id
-                    list_data['date_created'] = shoppinglist.date_created
-                    list_data['date_modified'] = shoppinglist.date_modified
+                    # list_data['date_created'] = shoppinglist.date_created
+                    # list_data['date_modified'] = shoppinglist.date_modified
                     results2.append(list_data)
 
                 return make_response(jsonify("Total = {} Lists".format(len(results2)), results2)), 200
@@ -190,18 +190,18 @@ def create_app(config_name):
 
                         response = jsonify({
                             'id': shoppinglist.id,
-                            'name': shoppinglist.name,
-                            'date-created': shoppinglist.date_created,
-                            'date-modified': shoppinglist.date_modified
+                            'name': shoppinglist.name
+                            # 'date-created': shoppinglist.date_created,
+                            # 'date-modified': shoppinglist.date_modified
                         })
                         return make_response(response), 200
 
                     else:
                         response = jsonify({
                             'id' : shoppinglist.id,
-                            'name' : shoppinglist.name,
-                            'date-created' : shoppinglist.date_created,
-                            'date-modified' : shoppinglist.date_modified
+                            'name' : shoppinglist.name
+                            # 'date-created' : shoppinglist.date_created,
+                            # 'date-modified' : shoppinglist.date_modified
                         })
                         return make_response(response), 200
                 else:
@@ -260,8 +260,8 @@ def create_app(config_name):
                             list_data['Name'] = listitem.name
                             list_data['List'] = list_id
                             list_data['Owner'] = user_id
-                            list_data['Date Created'] = listitem.date_created
-                            list_data['Date Modified'] = listitem.date_modified
+                            # list_data['Date Created'] = listitem.date_created
+                            # list_data['Date Modified'] = listitem.date_modified
                             results.append(list_data)
 
                         return make_response(jsonify(results)), 200
@@ -305,18 +305,18 @@ def create_app(config_name):
 
                         response = jsonify({
                         'id': listitem.id,
-                        'name': listitem.name,
-                        'date-created': listitem.date_created,
-                        'date-modified': listitem.date_modified
+                        'name': listitem.name
+                        # 'date-created': listitem.date_created,
+                        # 'date-modified': listitem.date_modified
                         })
                         return make_response(response), 200
 
                     elif request.method == 'GET':
                         response = jsonify({
                         'id': listitem.id,
-                        'name':listitem.name,
-                        'date-created': listitem.date_created,
-                        'date-modified': listitem.date_modified
+                        'name':listitem.name
+                        # 'date-created': listitem.date_created,
+                        # 'date-modified': listitem.date_modified
                         })
                         return make_response(response), 200
                 else:
