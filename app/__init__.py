@@ -15,8 +15,8 @@ def create_app(config_name):
     bcrypt = Bcrypt(app)
 
 
-    app.config.from_object(app_config['development'])
-    # app.config.from_object(app_config['production'])
+    # app.config.from_object(app_config['development'])
+    app.config.from_object(app_config['production'])
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
 
@@ -107,8 +107,6 @@ def create_app(config_name):
                     list_data['id'] = shoppinglist.id
                     list_data['name'] = shoppinglist.name
                     list_data['owner'] = user_id
-                    # list_data['date_created'] = shoppinglist.date_created
-                    # list_data['date_modified'] = shoppinglist.date_modified
                     
                     results.append(list_data)
 
@@ -126,8 +124,6 @@ def create_app(config_name):
                     'next_url': next_url
                 }
 
-
-                # return make_response(jsonify("Total = {} Lists".format(len(results)), urls, results)), 200
                 size = len(results);
                 return make_response(jsonify({"total":size,"urls":urls, "lists":results})), 200;     
 
@@ -144,10 +140,7 @@ def create_app(config_name):
                     list_data['name'] = shoppinglist.name
                     results1.append(list_data)
 
-                # return make_response(jsonify("Total = {} Search Results".format(len(results1)), results1)), 200;
                 return make_response(jsonify({"lists":results1})), 200;
-                # else:
-                #     return make_response(jsonify({'message':'Pass proper search parameters'})), 400
                 
 
             else:
@@ -159,35 +152,10 @@ def create_app(config_name):
                     list_data['id'] = shoppinglist.id
                     list_data['name'] = shoppinglist.name
                     list_data['owner'] = user_id
-                    # list_data['date_created'] = shoppinglist.date_created
-                    # list_data['date_modified'] = shoppinglist.date_modified
                     results2.append(list_data)
 
                 size = len(results2);
                 return make_response(jsonify({"lists":results2, "total":size})), 200;         
-
-    # @app.route('/shoppinglists/search/', methods=['GET'])
-    # @login_essential
-    # def search(user_id):
-    #     if request.args.get("q"):
-        
-    #         search_word = request.args.get("q", "")
-
-    #         q = ShoppingList.query.filter(ShoppingList.name.ilike("%"+ search_word +"%")).filter_by(owner=user_id).all()
-
-    #         results1 = []
-
-    #         for shoppinglist in q:
-    #             list_data = {}
-    #             list_data['id'] = shoppinglist.id
-    #             list_data['name'] = shoppinglist.name
-    #             results1.append(list_data)
-
-    #         return make_response(jsonify("Total = {} Search Results".format(len(results1)), results1)), 200
-    #     else:
-    #         return make_response(jsonify({'message':'Pass proper search parameters'})), 400
-                        
-        
 
     @app.route('/shoppinglists/<int:id>', methods=['GET', 'DELETE', 'PUT'])
     def shopping_modifications(id, **kwargs):
