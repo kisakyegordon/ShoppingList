@@ -56,7 +56,7 @@ class ShoppingTestCase(unittest.TestCase):
 
         res = self.client().post('/shoppinglists/', headers=dict(Authorization="Bearer " + access_token), data=self.shoppinglist)
 
-        search = self.client().get('/shoppinglists/search/?q=mon', headers=dict(Authorization="Bearer " + access_token))
+        search = self.client().get('/shoppinglists/?q=mon', headers=dict(Authorization="Bearer " + access_token))
         self.assertIn('Monday', str(search.data))
 
     def test_shoppinglist_getall(self):

@@ -76,6 +76,12 @@ def create_app(config_name):
             name = str(request.data.get('name', ''))
 
             if name:
+                list_exists = ShoppingList.query.filter_by(owner=user_id).all()
+                for list_exist in list_exists:
+                    if name == list_exist.name:
+                        return make_response(jsonify({"message":"List already exists"})), 409
+
+
                 shoppinglist = ShoppingList(name=name, owner=user_id)
                 shoppinglist.save()
                 response = jsonify({
@@ -121,7 +127,28 @@ def create_app(config_name):
                 }
 
 
-                return make_response(jsonify("Total = {} Lists".format(len(results)), urls, results)), 200
+                # return make_response(jsonify("Total = {} Lists".format(len(results)), urls, results)), 200
+                size = len(results);
+                return make_response(jsonify({"total":size,"urls":urls, "lists":results})), 200;     
+
+            elif request.args.get("q"):
+                search_word = request.args.get("q", "")
+
+                search_results = ShoppingList.query.filter(ShoppingList.name.ilike("%"+ search_word +"%")).filter_by(owner=user_id).all()
+
+                results1 = []
+
+                for shoppinglist in search_results:
+                    list_data = {}
+                    list_data['id'] = shoppinglist.id
+                    list_data['name'] = shoppinglist.name
+                    results1.append(list_data)
+
+                # return make_response(jsonify("Total = {} Search Results".format(len(results1)), results1)), 200;
+                return make_response(jsonify({"lists":results1})), 200;
+                # else:
+                #     return make_response(jsonify({'message':'Pass proper search parameters'})), 400
+                
 
             else:
                 shoppinglist_get = ShoppingList.query.filter_by(owner=user_id).all()
@@ -136,28 +163,29 @@ def create_app(config_name):
                     # list_data['date_modified'] = shoppinglist.date_modified
                     results2.append(list_data)
 
-                return make_response(jsonify("Total = {} Lists".format(len(results2)), results2)), 200
-                
-    @app.route('/shoppinglists/search/', methods=['GET'])
-    @login_essential
-    def search(user_id):
-        if request.args.get("q"):
+                size = len(results2);
+                return make_response(jsonify({"lists":results2, "total":size})), 200;         
+
+    # @app.route('/shoppinglists/search/', methods=['GET'])
+    # @login_essential
+    # def search(user_id):
+    #     if request.args.get("q"):
         
-            search_word = request.args.get("q", "")
+    #         search_word = request.args.get("q", "")
 
-            q = ShoppingList.query.filter(ShoppingList.name.ilike("%"+ search_word +"%")).filter_by(owner=user_id).all()
+    #         q = ShoppingList.query.filter(ShoppingList.name.ilike("%"+ search_word +"%")).filter_by(owner=user_id).all()
 
-            results1 = []
+    #         results1 = []
 
-            for shoppinglist in q:
-                list_data = {}
-                list_data['id'] = shoppinglist.id
-                list_data['name'] = shoppinglist.name
-                results1.append(list_data)
+    #         for shoppinglist in q:
+    #             list_data = {}
+    #             list_data['id'] = shoppinglist.id
+    #             list_data['name'] = shoppinglist.name
+    #             results1.append(list_data)
 
-            return make_response(jsonify("Total = {} Search Results".format(len(results1)), results1)), 200
-        else:
-            return make_response(jsonify({'message':'Pass proper search parameters'}))
+    #         return make_response(jsonify("Total = {} Search Results".format(len(results1)), results1)), 200
+    #     else:
+    #         return make_response(jsonify({'message':'Pass proper search parameters'})), 400
                         
         
 
@@ -237,6 +265,10 @@ def create_app(config_name):
                         name = str(request.data.get('name', ''))
 
                         if name:
+                            item_exists = ListItem.query.filter_by(list_id=list_id).all()
+                            for item_exist in item_exists:
+                                if name == item_exist.name:
+                                    return make_response(jsonify({"message":"List Item Already Exists on this list"})), 409
                             
                             listitem = ListItem(name=name, list_id=list_id)
                             ListItem.save(listitem)
@@ -264,7 +296,7 @@ def create_app(config_name):
                             # list_data['Date Modified'] = listitem.date_modified
                             results.append(list_data)
 
-                        return make_response(jsonify(results)), 200
+                        return make_response(jsonify({"items":results})), 200
                 else:
                     response = {'message': 'Token is unusable - login again'}
                     return make_response(jsonify(response)), 401

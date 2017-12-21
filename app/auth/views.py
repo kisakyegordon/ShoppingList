@@ -4,38 +4,46 @@ from flask.views import MethodView
 from flask import Blueprint, make_response, request, jsonify
 from app.models import User
 from flask import json, abort, request, jsonify
+from werkzeug.exceptions import HTTPException, NotFound, BadRequest
+
 
 
 class RegistrationView(MethodView):
+    '''
+    Registration View Class
+    '''
 
     def post(self):
+        ''' POST method for Registration '''
         if not request.data:
             return make_response(jsonify({"message":"Enter your user login details"})), 400
 
         user = User.query.filter_by(email=request.data['email']).first()
 
         if not user:
-            try:
-                post_data = request.data
+            if '@' not in request.data['email']:
+                return make_response(jsonify({"message":"Enter a valid email address"}))
+            else:
+                try:
+                    post_data = request.data
+                    email = post_data['email']
+                    password = post_data['password']
+                    country_town = post_data['country_town']
 
-                email = post_data['email']
-                password = post_data['password']
-                country_town = post_data['country_town']
+                    user = User(email=email, password=password, country_town=country_town)
+                    user.save()
 
-                user = User(email=email, password=password, country_town=country_town)
-                user.save()
+                    response = {
+                        'message': 'You registered successfully.'
+                        }
 
-                response = {
-                    'message': 'You registered successfully.'
-                }
+                    return make_response(jsonify(response)), 201
+                except Exception as e:
 
-                return make_response(jsonify(response)), 201
-            except Exception as e:
-
-                response = {
-                    "message": str(e) + "Missing"
-                }
-                return make_response(jsonify(response)), 401
+                    response = {
+                        "message": str(e) + "Missing"
+                    }
+                    return make_response(jsonify(response)), 400
         else:
             response = {
                 'message': 'User Already Exists. Please Login.'
@@ -44,8 +52,12 @@ class RegistrationView(MethodView):
 
 
 class LoginView(MethodView):
+    '''
+    Login view class
+    '''
 
     def post(self):
+        ''' POST method for Login ''' 
         try:
             user = User.query.filter_by(email=request.data['email']).first()
 
@@ -74,22 +86,26 @@ class LoginView(MethodView):
             return make_response(jsonify(response)), 500
 
 class LogoutView(MethodView):
-    
+    '''
+    Logout view class
+    '''
+
     def post(self):
-        
+        ''' POST method for Logout '''
+
         auth_header = request.headers.get("Authorization")
         access_token = auth_header.split(" ")[1]
-        
+
         if access_token:
             user_id = User.decode_token(access_token)
             if isinstance(user_id, int):
                 user_id = User.decode_token(access_token)
                 user = User.query.filter_by(id=user_id).first()
-                
+
                 if user:
                     user.token = ''
                     user.save()
-                
+
                 response = {
                     'message': 'Logged Out Successfully'
                 }
@@ -98,8 +114,12 @@ class LogoutView(MethodView):
 
 
 class ResetView(MethodView):
-    
+    '''
+    ResetView view class
+    '''
+
     def post(self):
+        ''' POST method for ResetView '''
 
         email = request.data['email']
         country_town = request.data['country_town']
@@ -143,4 +163,3 @@ auth_blueprint.add_url_rule(
     view_func=reset_view,
     methods=['POST']
 )
-

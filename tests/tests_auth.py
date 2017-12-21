@@ -58,7 +58,7 @@ class AuthTestCase(unittest.TestCase):
 
     def test_registration_missing_data(self):
         res = self.client().post('/auth/register', data=self.user_data_error)
-        self.assertEqual(res.status_code, 401)
+        self.assertEqual(res.status_code, 400)
 
     def test_already_registered_user(self):
 
