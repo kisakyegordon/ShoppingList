@@ -6,7 +6,6 @@ from flask import request, jsonify, abort, make_response, render_template
 from instance.config import app_config
 from flask_bcrypt import Bcrypt
 
-
 db = SQLAlchemy()
 
 def create_app(config_name):
@@ -21,8 +20,14 @@ def create_app(config_name):
     db.init_app(app)
 
     def login_essential(f):
+        """
+        Login Decorator to be applied to all protected routes
+        """
         @wraps(f)
         def wrapper(*args, **kwargs):
+            '''
+            Decorator wrapper for protecting routes
+            '''
             auth_header = request.headers.get("Authorization")
 
             if auth_header is not None and len(auth_header.split(" ")) == 2:
@@ -30,7 +35,8 @@ def create_app(config_name):
                 user_id = User.decode_token(access_token)
                 if isinstance(user_id, int):
 
-                    token_verify = User.query.filter_by(id=user_id).filter_by(token=access_token).first()
+                    token_verify = ({User.query.filter_by(id=user_id).
+                                     filter_by(token=access_token).first()})
                     if token_verify:
                         return f(user_id)
                     else:
@@ -99,7 +105,8 @@ def create_app(config_name):
                 page = int(request.args['page'])
                 limit = int(request.args['limit'])
 
-                shoppinglist_get = ShoppingList.query.filter_by(owner=user_id).paginate(page, limit, False).items
+                shoppinglist_get = (ShoppingList.query.filter_by(owner=user_id).
+                                    paginate(page, limit, False).items)
                 results = []
 
                 for shoppinglist in shoppinglist_get:
@@ -107,7 +114,7 @@ def create_app(config_name):
                     list_data['id'] = shoppinglist.id
                     list_data['name'] = shoppinglist.name
                     list_data['owner'] = user_id
-                    
+
                     results.append(list_data)
 
                 url = '/shoppinglists/'
@@ -124,13 +131,15 @@ def create_app(config_name):
                     'next_url': next_url
                 }
 
-                size = len(results);
-                return make_response(jsonify({"total":size,"urls":urls, "lists":results})), 200;     
+                size = len(results)
+                return make_response(jsonify({"total":size, "urls":urls, "lists":results})), 200
 
             elif request.args.get("q"):
                 search_word = request.args.get("q", "")
 
-                search_results = ShoppingList.query.filter(ShoppingList.name.ilike("%"+ search_word +"%")).filter_by(owner=user_id).all()
+                search_results = (ShoppingList.query.filter(ShoppingList.name.
+                                                            ilike("%"+ search_word +"%")).
+                                  filter_by(owner=user_id).all())
 
                 results1 = []
 
@@ -140,8 +149,7 @@ def create_app(config_name):
                     list_data['name'] = shoppinglist.name
                     results1.append(list_data)
 
-                return make_response(jsonify({"lists":results1})), 200;
-                
+                return make_response(jsonify({"lists":results1})), 200
 
             else:
                 shoppinglist_get = ShoppingList.query.filter_by(owner=user_id).all()
@@ -154,30 +162,59 @@ def create_app(config_name):
                     list_data['owner'] = user_id
                     results2.append(list_data)
 
-                size = len(results2);
-                return make_response(jsonify({"lists":results2, "total":size})), 200;         
+                size = len(results2)
+                return make_response(jsonify({"lists":results2, "total":size})), 200
+
+    @app.route('/v1/shoppinglists/search/', methods=['GET'])
+    @login_essential
+    def search(user_id):
+        '''
+        Version 2 Search function
+        '''
+        if request.args.get("q"):
+
+            search_word = request.args.get("q", "")
+
+            q = (ShoppingList.query.filter
+                 (ShoppingList.name.ilike("%"+ search_word +"%")).
+                 filter_by(owner=user_id).all())
+
+            results1 = []
+
+            for shoppinglist in q:
+                list_data = {}
+                list_data['id'] = shoppinglist.id
+                list_data['name'] = shoppinglist.name
+                results1.append(list_data)
+
+            size = len(results1)
+            return make_response(jsonify({"lists":results1, "total":size})), 200
 
     @app.route('/shoppinglists/<int:id>', methods=['GET', 'DELETE', 'PUT'])
     def shopping_modifications(id, **kwargs):
-        
+        '''
+        Single List Call
+        '''
+
         auth_header = request.headers.get("Authorization")
-            
+
         if auth_header is not None and len(auth_header.split(" ")) == 2:
             access_token = auth_header.split(" ")[1]
             user_id = User.decode_token(access_token)
             if isinstance(user_id, int):
-        
-                token_verify = User.query.filter_by(id=user_id).filter_by(token=access_token).first()
+
+                token_verify = (User.query.filter_by(id=user_id).
+                                filter_by(token=access_token).first())
                 if token_verify:
                     shoppinglist = ShoppingList.query.filter_by(id=id, owner=user_id).first()
                     if not shoppinglist:
                         response = {'message': 'List Does Not Exist'}
-                        return make_response(jsonify(response)), 404 
-                        # abort(404)
+                        return make_response(jsonify(response)), 404
 
                     if request.method == 'DELETE':
                         shoppinglist.delete()
-                        return {"message" : "List {} Has Been Deleted".format(shoppinglist.name)}, 200
+                        return {"message" : "List {} Has Been Deleted".format
+                                            (shoppinglist.name)}, 200
 
                     elif request.method == 'PUT':
                         name = str(request.data.get('name', ''))
@@ -187,8 +224,6 @@ def create_app(config_name):
                         response = jsonify({
                             'id': shoppinglist.id,
                             'name': shoppinglist.name
-                            # 'date-created': shoppinglist.date_created,
-                            # 'date-modified': shoppinglist.date_modified
                         })
                         return make_response(response), 200
 
@@ -196,8 +231,6 @@ def create_app(config_name):
                         response = jsonify({
                             'id' : shoppinglist.id,
                             'name' : shoppinglist.name
-                            # 'date-created' : shoppinglist.date_created,
-                            # 'date-modified' : shoppinglist.date_modified
                         })
                         return make_response(response), 200
                 else:
@@ -209,27 +242,30 @@ def create_app(config_name):
 
         else:
             response = {'message': 'No Token Provided'}
-            return make_response(jsonify(response)), 401      
+            return make_response(jsonify(response)), 401
 
     @app.route('/shoppinglists/<int:list_id>/items/', methods=['POST', 'GET'])
     def listitems(list_id):
-        
+        '''
+        Function holding list-id to post and get list items
+        '''
+
         auth_header = request.headers.get("Authorization")
-        
+
         if auth_header is not None and len(auth_header.split(" ")) == 2:
             access_token = auth_header.split(" ")[1]
             user_id = User.decode_token(access_token)
             if isinstance(user_id, int):
-        
-                token_verify = User.query.filter_by(id=user_id).filter_by(token=access_token).first()
+
+                token_verify = (User.query.filter_by(id=user_id).
+                                filter_by(token=access_token).first())
                 if token_verify:
                     shoppinglist = ShoppingList.query.filter_by(id=list_id).first()
                     if not shoppinglist:
                         response = {'message': 'List Does Not Exist'}
                         return make_response(jsonify(response)), 404
-                
+
                     if request.method == "POST":
-                            
                         name = str(request.data.get('name', ''))
 
                         if name:
@@ -237,7 +273,7 @@ def create_app(config_name):
                             for item_exist in item_exists:
                                 if name == item_exist.name:
                                     return make_response(jsonify({"message":"List Item Already Exists on this list"})), 409
-                            
+
                             listitem = ListItem(name=name, list_id=list_id)
                             ListItem.save(listitem)
                             response = jsonify({
@@ -260,8 +296,6 @@ def create_app(config_name):
                             list_data['Name'] = listitem.name
                             list_data['List'] = list_id
                             list_data['Owner'] = user_id
-                            # list_data['Date Created'] = listitem.date_created
-                            # list_data['Date Modified'] = listitem.date_modified
                             results.append(list_data)
 
                         return make_response(jsonify({"items":results})), 200
@@ -274,20 +308,22 @@ def create_app(config_name):
 
         else:
             response = {'message': 'No Token Provided'}
-            return make_response(jsonify(response)), 401   
+            return make_response(jsonify(response)), 401
 
     @app.route('/shoppinglists/<list_id>/items/<item_id>', methods=['GET', 'DELETE', 'PUT'])
     def item_modifications(item_id, **kwargs):
-        
-    
+        '''
+        Single item from a shopping list
+        '''
         auth_header = request.headers.get("Authorization")
-        
+
         if auth_header is not None and len(auth_header.split(" ")) == 2:
             access_token = auth_header.split(" ")[1]
             user_id = User.decode_token(access_token)
             if isinstance(user_id, int):
-        
-                token_verify = User.query.filter_by(id=user_id).filter_by(token=access_token).first()
+
+                token_verify = (User.query.filter_by(id=user_id).
+                                filter_by(token=access_token).first())
                 if token_verify:
                     listitem = ListItem.query.filter_by(id=item_id).first()
                     if not listitem:
@@ -304,19 +340,15 @@ def create_app(config_name):
                         listitem.save()
 
                         response = jsonify({
-                        'id': listitem.id,
-                        'name': listitem.name
-                        # 'date-created': listitem.date_created,
-                        # 'date-modified': listitem.date_modified
+                            'id': listitem.id,
+                            'name': listitem.name
                         })
                         return make_response(response), 200
 
                     elif request.method == 'GET':
                         response = jsonify({
-                        'id': listitem.id,
-                        'name':listitem.name
-                        # 'date-created': listitem.date_created,
-                        # 'date-modified': listitem.date_modified
+                            'id': listitem.id,
+                            'name':listitem.name
                         })
                         return make_response(response), 200
                 else:
@@ -328,7 +360,7 @@ def create_app(config_name):
 
         else:
             response = {'message': 'No Token Provided'}
-            return make_response(jsonify(response)), 401  
+            return make_response(jsonify(response)), 401
 
 
     from .auth import auth_blueprint
