@@ -22,7 +22,7 @@ class RegistrationView(MethodView):
 
         if not user:
             if '@' not in request.data['email']:
-                return make_response(jsonify({"message":"Enter a valid email address"}))
+                return make_response(jsonify({"message":"Enter a valid email address"})), 400
             else:
                 try:
                     post_data = request.data
@@ -48,7 +48,7 @@ class RegistrationView(MethodView):
             response = {
                 'message': 'User Already Exists. Please Login.'
             }
-            return make_response(jsonify(response)), 202
+            return make_response(jsonify(response)), 409
 
 
 class LoginView(MethodView):
@@ -78,7 +78,7 @@ class LoginView(MethodView):
                 response = {
                     'message': 'Invalid email or password'
                 }
-                return make_response(jsonify(response)), 401
+                return make_response(jsonify(response)), 400
         except Exception as e:
             response = {
                 'message': json.loads(str(e))
@@ -142,24 +142,24 @@ logout_view = LogoutView.as_view('logout_view')
 reset_view = ResetView.as_view('reset_view')
 
 auth_blueprint.add_url_rule(
-    '/auth/register',
+    '/api/v2/auth/register',
     view_func=registration_view,
     methods=['POST'])
 
 auth_blueprint.add_url_rule(
-    '/auth/login',
+    '/api/v2/auth/login',
     view_func=login_view,
     methods=['POST']
 )
 
 auth_blueprint.add_url_rule(
-    '/auth/logout',
+    '/api/v2/auth/logout',
     view_func=logout_view,
     methods=['POST']
 )
 
 auth_blueprint.add_url_rule(
-    '/auth/reset-password',
+    '/api/v2/auth/reset-password',
     view_func=reset_view,
     methods=['POST']
 )

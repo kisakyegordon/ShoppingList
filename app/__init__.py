@@ -14,8 +14,8 @@ def create_app(config_name):
     bcrypt = Bcrypt(app)
 
 
-    app.config.from_object(app_config['development'])
-    # app.config.from_object(app_config['production'])
+    # app.config.from_object(app_config['development'])
+    app.config.from_object(app_config['production'])
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
 
@@ -72,7 +72,7 @@ def create_app(config_name):
         response.headers.add('Access-Control-Allow-Methods', 'GET,HEAD,PUT,POST,DELETE')
         return response
 
-    @app.route('/shoppinglists/', methods=['POST', 'GET'])
+    @app.route('/api/v2/shoppinglists/', methods=['POST', 'GET'])
     @login_essential
     def shoppinglists(user_id):
         '''
@@ -117,7 +117,7 @@ def create_app(config_name):
 
                     results.append(list_data)
 
-                url = '/shoppinglists/'
+                url = '/api/v2/shoppinglists/'
                 if page <= 1:
                     prev_url = ''
                 else:
@@ -165,7 +165,7 @@ def create_app(config_name):
                 size = len(results2)
                 return make_response(jsonify({"lists":results2, "total":size})), 200
 
-    @app.route('/v1/shoppinglists/search/', methods=['GET'])
+    @app.route('/api/v1/shoppinglists/search/', methods=['GET'])
     @login_essential
     def search(user_id):
         '''
@@ -190,7 +190,7 @@ def create_app(config_name):
             size = len(results1)
             return make_response(jsonify({"lists":results1, "total":size})), 200
 
-    @app.route('/shoppinglists/<int:id>', methods=['GET', 'DELETE', 'PUT'])
+    @app.route('/api/v2/shoppinglists/<int:id>', methods=['GET', 'DELETE', 'PUT'])
     def shopping_modifications(id, **kwargs):
         '''
         Single List Call
@@ -228,11 +228,15 @@ def create_app(config_name):
                         return make_response(response), 200
 
                     else:
-                        response = jsonify({
+                        # results = []
+                        response = {
                             'id' : shoppinglist.id,
                             'name' : shoppinglist.name
-                        })
-                        return make_response(response), 200
+                        }
+                        # results.append(response)
+
+                        # return make_response(response), 200
+                        return make_response(jsonify({"list":response}))
                 else:
                     response = {'message': 'Token is unusable - login again'}
                     return make_response(jsonify(response)), 401
@@ -244,7 +248,7 @@ def create_app(config_name):
             response = {'message': 'No Token Provided'}
             return make_response(jsonify(response)), 401
 
-    @app.route('/shoppinglists/<int:list_id>/items/', methods=['POST', 'GET'])
+    @app.route('/api/v2/shoppinglists/<int:list_id>/items/', methods=['POST', 'GET'])
     def listitems(list_id):
         '''
         Function holding list-id to post and get list items
@@ -310,7 +314,7 @@ def create_app(config_name):
             response = {'message': 'No Token Provided'}
             return make_response(jsonify(response)), 401
 
-    @app.route('/shoppinglists/<list_id>/items/<item_id>', methods=['GET', 'DELETE', 'PUT'])
+    @app.route('/api/v2/shoppinglists/<list_id>/items/<item_id>', methods=['GET', 'DELETE', 'PUT'])
     def item_modifications(item_id, **kwargs):
         '''
         Single item from a shopping list
