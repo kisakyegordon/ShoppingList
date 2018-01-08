@@ -14,8 +14,8 @@ def create_app(config_name):
     bcrypt = Bcrypt(app)
 
 
-    # app.config.from_object(app_config['development'])
-    app.config.from_object(app_config['production'])
+    app.config.from_object(app_config['development'])
+    # app.config.from_object(app_config['production'])
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
 
