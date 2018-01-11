@@ -14,16 +14,16 @@ def create_app(config_name):
     bcrypt = Bcrypt(app)
 
 
-    app.config.from_object(app_config['development'])
-    # app.config.from_object(app_config['production'])
+    # app.config.from_object(app_config['development'])
+    app.config.from_object(app_config['production'])
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
 
-    def login_essential(f):
+    def login_essential(test):
         """
         Login Decorator to be applied to all protected routes
         """
-        @wraps(f)
+        @wraps(test)
         def wrapper(*args, **kwargs):
             '''
             Decorator wrapper for protecting routes
@@ -35,10 +35,9 @@ def create_app(config_name):
                 user_id = User.decode_token(access_token)
                 if isinstance(user_id, int):
 
-                    token_verify = ({User.query.filter_by(id=user_id).
-                                     filter_by(token=access_token).first()})
+                    token_verify = ({User.query.filter_by(id=user_id).filter_by(token=access_token).first()})
                     if token_verify:
-                        return f(user_id)
+                        return test(user_id)
                     else:
                         response = {'message': 'Token is unusable - login again'}
                         return make_response(jsonify(response)), 401
@@ -48,8 +47,7 @@ def create_app(config_name):
 
             else:
                 response = {'message': 'No Token Provided'}
-                return make_response(jsonify(response)), 401             
-
+                return make_response(jsonify(response)), 401
         return wrapper
 
     @app.route('/')
